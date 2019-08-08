@@ -6,16 +6,16 @@ DB_ROOT_PWD='bubuntu'
 DB_USER_PWD='bubuntu'
 setenforce permissive
 echo "<<<<<<<<<<<<<<<<<< Update system >>>>>>>>>>>>>>>>>>>>"
-yum update -y
+#yum update -y
 echo "<<<<<<<<<<<<<<<<<< Install Vim >>>>>>>>>>>>>>>>>>>>"
-yum install vim -y
+yum install vim -y -q
 echo "<<<<<<<<<<<<<<<<<< Install epel >>>>>>>>>>>>>>>>>>>>"
-yum install epel-release -y
+yum install epel-release -y -q
 echo "<<<<<<<<<<<<<<<<<< rmp  >>>>>>>>>>>>>>>>>>>>"
 rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
 rpm -Uvh http://repo.mysql.com/mysql-community-release-el7-7.noarch.rpm
 echo "<<<<<<<<<<<<<<<<<< Install PHP 7.2 >>>>>>>>>>>>>>>>>>>>"
-yum --enablerepo=remi-php72 install php php-mysql php-xml php-soap php-xmlrpc php-mbstring php-json php-gd php-mcrypt -y
+yum --enablerepo=remi-php72 install php php-mysql php-xml php-soap php-xmlrpc php-mbstring php-json php-gd php-mcrypt -y -q
 echo "<<<<<<<<<<<<<<<<<< Opcache php.ini >>>>>>>>>>>>>>>>>>>>"
 PATH_PHP_INI="/etc/php.ini"
 /bin/cat <<EOM >$PATH_PHP_INI
@@ -33,21 +33,21 @@ opcache.save_comments = 1
 opcache.enable_file_override = 0
 EOM
 echo "<<<<<<<<<<<<<<<<<< Install and enable Apache >>>>>>>>>>>>>>>>>>>>"
-yum --enablerepo=epel,remi install httpd -y
+yum --enablerepo=epel,remi install httpd -y -q
 systemctl start httpd.service
 systemctl enable httpd.service
 echo "<<<<<<<<<<<<<<<<<< Install other >>>>>>>>>>>>>>>>>>>>"
-yum install php72-php-fpm php72-php-gd php72-php-json php72-php-mbstring php72-php-mysqlnd php72-php-xml php72-php-xmlrpc php72-php-opcache -y
-yum --enablerepo="base" -y install yum-utils
+yum install php72-php-fpm php72-php-gd php72-php-json php72-php-mbstring php72-php-mysqlnd php72-php-xml php72-php-xmlrpc php72-php-opcache -y -q
+yum --enablerepo="base" -y -q install yum-utils
 yum-config-manager --enable remi-php72
-yum install php-pecl-zip php-intl -y
+yum install php-pecl-zip php-intl -y -q
 systemctl restart httpd.service
 echo "<<<<<<<<<<<<<<<<<<  Install wget  >>>>>>>>>>>>>>>>>>>>"
-yum install wget -y
+yum install wget -y -q
 echo "<<<<<<<<<<<<<<<<<<  Download Moodle 3.7  >>>>>>>>>>>>>>>>>>>>"
 cd
 wget https://download.moodle.org/download.php/direct/stable37/moodle-3.7.1.tgz -q
-tar -zxvf moodle-3.7.1.tgz -C /var/www/html
+tar -zxf moodle-3.7.1.tgz -C /var/www/html
 echo "<<<<<<<<<<<<<<<<<< Make dir  >>>>>>>>>>>>>>>>>>>>"
 mkdir /var/www/html/moodledata
 echo "<<<<<<<<<<<<<<<<<<  Permisions  >>>>>>>>>>>>>>>>>>>>"
@@ -73,7 +73,7 @@ PATH_VIRTUAL_HOST_CONF="/etc/httpd/conf.d/moodle.sii2019devops.com.conf"
 EOM
 systemctl restart httpd.service
 echo "<<<<<<<<<<<<<<<<<<  CLI Instal Moodle  >>>>>>>>>>>>>>>>>>>>"
-/usr/bin/php /var/www/html/moodle/admin/cli/install.php --wwwroot='http://${WEB_IP_NAT}' --dataroot='/var/www/html/moodledata' --dbtype='mariadb' --dbhost='${DB_IP_LOCAL}' --dbuser='moodle_devops' --dbpass=bubuntu --dbport='3306'  --shortname='moodle.local' --adminuser='admin' --adminpass='bubuntu' --adminemail='admin@yo.lo' --fullname='moodle.local_sii2019devops' --non-interactive --agree-license
+/usr/bin/php /var/www/html/moodle/admin/cli/install.php --wwwroot='http://$WEB_IP_NAT' --dataroot='/var/www/html/moodledata' --dbtype='mariadb' --dbhost='192.168.0.10' --dbuser='moodle_devops' --dbpass=bubuntu --dbport='3306'  --shortname='moodle.local' --adminuser='admin' --adminpass='bubuntu' --adminemail='admin@yo.lo' --fullname='moodle.local_sii2019devops' --non-interactive --agree-license
 chmod o+r /var/www/html/moodle/config.php
 systemctl restart httpd.service
 echo "<<<<<<<<<<<<<<<<<<  End  >>>>>>>>>>>>>>>>>>>>"

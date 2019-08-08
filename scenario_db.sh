@@ -6,16 +6,16 @@ DB_ROOT_PWD='bubuntu'
 DB_USER_PWD='bubuntu'
 setenforce permissive
 echo "<<<<<<<<<<<<<<<<<< Update system >>>>>>>>>>>>>>>>>>>>"
-yum update -y
+#yum update -y
 echo "<<<<<<<<<<<<<<<<<< Install Vim >>>>>>>>>>>>>>>>>>>>"
-yum install vim -y
+yum install vim -y -q
 echo "<<<<<<<<<<<<<<<<<< Install epel >>>>>>>>>>>>>>>>>>>>"
-yum install epel-release -y
+yum install epel-release -y -q
 echo "<<<<<<<<<<<<<<<<<< rmp  >>>>>>>>>>>>>>>>>>>>"
 rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
 rpm -Uvh http://repo.mysql.com/mysql-community-release-el7-7.noarch.rpm
 echo "<<<<<<<<<<<<<<<<<< Install MySQL >>>>>>>>>>>>>>>>>>>>"
-yum install mysql-server -y
+yum install mysql-server -y -q
 systemctl enable mysqld.service
 systemctl start mysqld.service
 echo "***************** Configuring MySQL ******************"
@@ -27,15 +27,15 @@ DROP DATABASE IF EXISTS test;
 DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
 FLUSH PRIVILEGES;
 CREATE DATABASE moodle;
-CREATE USER 'moodle_devops'@'${WEB_IP_LOCAL}'
+CREATE USER 'moodle_devops'@'192.168.0.11'
   IDENTIFIED BY '${DB_ROOT_PWD}';
 GRANT ALL
   ON moodle.*
-  TO 'moodle_devops'@'${WEB_IP_LOCAL}'
+  TO 'moodle_devops'@'192.168.0.11'
   WITH GRANT OPTION;
 _EOF_
 echo "<<<<<<<<<<<<<<<<<< Add bind-address  >>>>>>>>>>>>>>>>>>>>"
-sed -i 's/^\[mysqld\]/\[mysqld\]\nbind-address = '$DB_IP_LOCAL'/' /etc/my.cnf
+sed -i 's/^\[mysqld\]/\[mysqld\]\nbind-address = '192.168.0.10'/' /etc/my.cnf
 systemctl restart mysqld.service
 echo "<<<<<<<<<<<<<<<<<< Mysql Fix  >>>>>>>>>>>>>>>>>>>>"
 PATH_MYSQL_CONF="/etc/my.cnf"
