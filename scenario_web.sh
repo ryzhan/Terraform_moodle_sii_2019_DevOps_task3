@@ -73,7 +73,7 @@ PATH_VIRTUAL_HOST_CONF="/etc/httpd/conf.d/moodle.sii2019devops.com.conf"
 EOM
 systemctl restart httpd.service
 echo "<<<<<<<<<<<<<<<<<<  CLI Instal Moodle  >>>>>>>>>>>>>>>>>>>>"
-/usr/bin/php /var/www/html/moodle/admin/cli/install.php --wwwroot='http://${WEB_IP}' --dataroot='/var/www/html/moodledata' --dbtype='mariadb' --dbhost='${DB_IP}' --dbuser='moodle_devops' --dbpass=bubuntu --dbport='3306'  --shortname='moodle.local' --adminuser='admin' --adminpass='bubuntu' --adminemail='admin@yo.lo' --fullname='moodle.local_sii2019devops' --non-interactive --agree-license
+/usr/bin/php /var/www/html/moodle/admin/cli/install.php --wwwroot='http://${WEB_IP_NAT}' --dataroot='/var/www/html/moodledata' --dbtype='mariadb' --dbhost='${DB_IP_LOCAL}' --dbuser='moodle_devops' --dbpass=bubuntu --dbport='3306'  --shortname='moodle.local' --adminuser='admin' --adminpass='bubuntu' --adminemail='admin@yo.lo' --fullname='moodle.local_sii2019devops' --non-interactive --agree-license
 chmod o+r /var/www/html/moodle/config.php
 systemctl restart httpd.service
 echo "<<<<<<<<<<<<<<<<<<  End  >>>>>>>>>>>>>>>>>>>>"

@@ -27,15 +27,15 @@ DROP DATABASE IF EXISTS test;
 DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
 FLUSH PRIVILEGES;
 CREATE DATABASE moodle;
-CREATE USER 'moodle_devops'@'${WEB_IP}'
+CREATE USER 'moodle_devops'@'${WEB_IP_LOCAL}'
   IDENTIFIED BY '${DB_ROOT_PWD}';
 GRANT ALL
   ON moodle.*
-  TO 'moodle_devops'@'${WEB_IP}'
+  TO 'moodle_devops'@'${WEB_IP_LOCAL}'
   WITH GRANT OPTION;
 _EOF_
 echo "<<<<<<<<<<<<<<<<<< Add bind-address  >>>>>>>>>>>>>>>>>>>>"
-sed -i 's/^\[mysqld\]/\[mysqld\]\nbind-address = '$DB_IP'/' /etc/my.cnf
+sed -i 's/^\[mysqld\]/\[mysqld\]\nbind-address = '$DB_IP_LOCAL'/' /etc/my.cnf
 systemctl restart mysqld.service
 echo "<<<<<<<<<<<<<<<<<< Mysql Fix  >>>>>>>>>>>>>>>>>>>>"
 PATH_MYSQL_CONF="/etc/my.cnf"
