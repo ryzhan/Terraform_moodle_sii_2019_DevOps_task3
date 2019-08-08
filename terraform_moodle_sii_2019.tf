@@ -104,8 +104,8 @@ connection {
 
  provisioner "remote-exec" {
    inline = [
-      "export WEB_IP_NAT=${google_compute_instance.default_web.network_interface.0.access_config.0.nat_ip}",
-      "export DB_IP_LOCAL=${google_compute_instance.default_db.network_interface.0.network_ip}",
+      #"export WEB_IP_NAT=${google_compute_instance.default_web.network_interface.0.access_config.0.nat_ip}",
+      #"export DB_IP_LOCAL=${google_compute_instance.default_db.network_interface.0.network_ip}",
       "echo $WEB_IP_NAT",
       "echo $DB_IP_LOCAL",
       "chmod +x /tmp/scenario_web.sh",
