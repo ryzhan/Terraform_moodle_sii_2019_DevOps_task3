@@ -1,0 +1,115 @@
+utput.ip_db_local - *terraform.NodeApplyableOutput
+  google_compute_instance.default_db - *terraform.NodeValidatableResource
+output.ip_web - *terraform.NodeApplyableOutput
+  google_compute_instance.default_web - *terraform.NodeValidatableResource
+output.ip_web_local - *terraform.NodeApplyableOutput
+  google_compute_instance.default_web - *terraform.NodeValidatableResource
+provider.google - *terraform.NodeApplyableProvider
+provider.random - *terraform.NodeApplyableProvider
+provisioner.file - *terraform.NodeProvisioner
+provisioner.remote-exec - *terraform.NodeProvisioner
+random_id.instance_id - *terraform.NodeValidatableResource
+  provider.random - *terraform.NodeApplyableProvider
+------
+db_local - *terraform.NodeApplyableOutput
+  google_compute_instance.default_db - *terraform.NodeValidatableResource
+output.ip_web - *terraform.NodeApplyableOutput
+  google_compute_instance.default_web - *terraform.NodeValidatableResource
+output.ip_web_local - *terraform.NodeApplyableOutput
+  google_compute_instance.default_web - *terraform.NodeValidatableResource
+provider.google - *terraform.NodeApplyableProvider
+provider.google (close) - *terraform.graphNodeCloseProvider
+  google_compute_firewall.default_db - *terraform.NodeValidatableResource
+  google_compute_firewall.default_web - *terraform.NodeValidatableResource
+  google_compute_instance.default_db - *terraform.NodeValidatableResource
+  google_compute_instance.default_web - *terraform.NodeValidatableResource
+  provider.google - *terraform.NodeApplyableProvider
+provider.random - *terraform.NodeApplyableProvider
+provider.random (close) - *terraform.graphNodeCloseProvider
+  provider.random - *terraform.NodeApplyableProvider
+  random_id.instance_id - *terraform.NodeValidatableResource
+provisioner.file - *terraform.NodeProvisioner
+provisioner.file (close) - *terraform.graphNodeCloseProvisioner
+  google_compute_instance.default_db - *terraform.NodeValidatableResource
+  google_compute_instance.default_web - *terraform.NodeValidatableResource
+provisioner.remote-exec - *terraform.NodeProvisioner
+provisioner.remote-exec (close) - *terraform.graphNodeCloseProvisioner
+  google_compute_instance.default_db - *terraform.NodeValidatableResource
+  google_compute_instance.default_web - *terraform.NodeValidatableResource
+random_id.instance_id - *terraform.NodeValidatableResource
+  provider.random - *terraform.NodeApplyableProvider
+root - terraform.graphNodeRoot
+  meta.count-boundary (EachMode fixup) - *terraform.NodeCountBoundary
+  provider.google (close) - *terraform.graphNodeCloseProvider
+  provider.random (close) - *terraform.graphNodeCloseProvider
+  provisioner.file (close) - *terraform.graphNodeCloseProvisioner
+  provisioner.remote-exec (close) - *terraform.graphNodeClos2019/08/08 14:45:35 [ERROR] Graph validation failed. Graph:
+
+google_compute_firewall.default_db
+  provider.google
+google_compute_firewall.default_web
+  provider.google
+google_compute_instance.default_db
+  google_compute_instance.default_web
+  provider.google
+  provisioner.file
+  provisioner.remote-exec
+  random_id.instance_id
+google_compute_instance.default_web
+  google_compute_instance.default_db
+  provider.google
+  provisioner.file
+  provisioner.remote-exec
+  random_id.instance_id
+meta.count-boundary (EachMode fixup)
+  google_compute_firewall.default_db
+  google_compute_firewall.default_web
+  google_compute_instance.default_db
+  google_compute_instance.default_web
+  output.ip_db
+  output.ip_db_local
+  output.ip_web
+  output.ip_web_local
+  provider.google
+  provider.random
+  provisioner.file
+  provisioner.remote-exec
+  random_id.instance_id
+output.ip_db
+  google_compute_instance.default_db
+output.ip_db_local
+  google_compute_instance.default_db
+output.ip_web
+  google_compute_instance.default_web
+output.ip_web_local
+  google_compute_instance.default_web
+provider.google
+provider.google (close)
+  google_compute_firewall.default_db
+  google_compute_firewall.default_web
+  google_compute_instance.default_db
+  google_compute_instance.default_web
+  provider.google
+provider.random
+provider.random (close)
+  provider.random
+  random_id.instance_id
+provisioner.file
+provisioner.file (close)
+  google_compute_instance.default_db
+  google_compute_instance.default_web
+provisioner.remote-exec
+provisioner.remote-exec (close)
+  google_compute_instance.default_db
+  google_compute_instance.default_web
+random_id.instance_id
+  provider.random
+root
+  meta.count-boundary (EachMode fixup)
+  provider.google (close)
+  provider.random (close)
+  provisioner.file (close)
+  provisioner.remote-exec (close)
+
+Error: Cycle: google_compute_instance.default_db, google_compute_instance.default_web
+
