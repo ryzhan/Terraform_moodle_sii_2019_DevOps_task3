@@ -4,15 +4,46 @@ provider "google" {
   region      = "us-central1"
 }
 
+#variable "depends_on" { default = [], type = "list" }
 
 resource "random_id" "instance_id" {
  byte_length = 8
 }
 
-resource "google_compute_firewall" "default_web" {  
+
+
+resource "google_compute_network" "my_network" {
+  name = "my-net"
+  auto_create_subnetworks = "false"
+}
+
+resource "google_compute_subnetwork" "my_subnetwork" {
+  name          = "my-subnet"
+  ip_cidr_range = "192.168.0.0/24"
+  region        = "us-central1"
+  network       = "${google_compute_network.my_network.self_link}"
+}
+
+resource "google_compute_address" "internal_with_subnet_and_address_db" {
+  name         = "my-internal-address-db"
+  subnetwork   = "${google_compute_subnetwork.my_subnetwork.self_link}"
+  address_type = "INTERNAL"
+  address      = "192.168.0.10"
+  region       = "us-central1"
+}
+
+resource "google_compute_address" "internal_with_subnet_and_address_web" {
+  name         = "my-internal-address-web"
+  subnetwork   = "${google_compute_subnetwork.my_subnetwork.self_link}"
+  address_type = "INTERNAL"
+  address      = "192.168.0.11"
+  region       = "us-central1"
+}
+
+resource "google_compute_firewall" "default-web" {  
     name = "allow-http"
-    network = "my-network"
-    
+    network = "my-net"
+    depends_on = ["google_compute_network.my_network"]
     allow {
         protocol = "tcp"
         ports = ["80", "22"]
@@ -22,10 +53,10 @@ resource "google_compute_firewall" "default_web" {
     target_tags = ["web-moodle"]
 }
 
-resource "google_compute_firewall" "default_db" {  
+resource "google_compute_firewall" "default-db" {  
     name = "allow-mysql"
-    network = "my-network"
-    
+    network = "my-net"
+    depends_on = ["google_compute_network.my_network"]
     allow {
         protocol = "tcp"
         ports = ["3306", "22"]
@@ -35,34 +66,6 @@ resource "google_compute_firewall" "default_db" {
     target_tags = ["db-moodle"]
 }
 
-
-
-resource "google_compute_network" "default" {
-  name = "my-network"
-}
-
-resource "google_compute_subnetwork" "default" {
-  name          = "my-subnet"
-  ip_cidr_range = "192.168.0.0/24"
-  region        = "us-central1"
-  network       = "${google_compute_network.default.self_link}"
-}
-
-resource "google_compute_address" "internal_with_subnet_and_address_db" {
-  name         = "my-internal-address-db"
-  subnetwork   = "${google_compute_subnetwork.default.self_link}"
-  address_type = "INTERNAL"
-  address      = "192.168.0.10"
-  region       = "us-central1"
-}
-
-resource "google_compute_address" "internal_with_subnet_and_address_web" {
-  name         = "my-internal-address-web"
-  subnetwork   = "${google_compute_subnetwork.default.self_link}"
-  address_type = "INTERNAL"
-  address      = "192.168.0.11"
-  region       = "us-central1"
-}
 
 resource "google_compute_instance" "default_db" {
  name         = "moodle-db-${random_id.instance_id.hex}"
@@ -84,7 +87,7 @@ resource "google_compute_instance" "default_db" {
  }
 
  network_interface {
-   network = "my-network"
+   network = "my-net"
    subnetwork = "my-subnet"
    network_ip = "${google_compute_address.internal_with_subnet_and_address_db.address}"
    access_config {
@@ -138,7 +141,7 @@ resource "google_compute_instance" "default_web" {
  tags = ["web-moodle","http-server"]
  
  network_interface {
-   network = "my-network"
+   network = "my-net"
    subnetwork = "my-subnet"
    network_ip = "${google_compute_address.internal_with_subnet_and_address_web.address}"
    access_config {
