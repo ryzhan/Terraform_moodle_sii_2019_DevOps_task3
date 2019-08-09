@@ -4,8 +4,6 @@ provider "google" {
   region      = "us-central1"
 }
 
-#variable "depends_on" { default = [], type = "list" }
-
 resource "random_id" "instance_id" {
  byte_length = 8
 }
@@ -15,6 +13,7 @@ resource "random_id" "instance_id" {
 resource "google_compute_network" "my_network" {
   name = "my-net"
   auto_create_subnetworks = "false"
+  depends_on = ["google_compute_network.my_network"]
 }
 
 resource "google_compute_subnetwork" "my_subnetwork" {
@@ -22,6 +21,7 @@ resource "google_compute_subnetwork" "my_subnetwork" {
   ip_cidr_range = "192.168.0.0/24"
   region        = "us-central1"
   network       = "${google_compute_network.my_network.self_link}"
+  depends_on = ["random_id.instance_id"]
 }
 
 resource "google_compute_address" "internal_with_subnet_and_address_db" {
@@ -30,6 +30,7 @@ resource "google_compute_address" "internal_with_subnet_and_address_db" {
   address_type = "INTERNAL"
   address      = "192.168.0.10"
   region       = "us-central1"
+  depends_on = ["google_compute_subnetwork.my_subnetwork"]
 }
 
 resource "google_compute_address" "internal_with_subnet_and_address_web" {
@@ -38,6 +39,7 @@ resource "google_compute_address" "internal_with_subnet_and_address_web" {
   address_type = "INTERNAL"
   address      = "192.168.0.11"
   region       = "us-central1"
+  depends_on = ["google_compute_subnetwork.my_subnetwork"]
 }
 
 resource "google_compute_firewall" "default-web" {  
@@ -71,6 +73,8 @@ resource "google_compute_instance" "default_db" {
  name         = "moodle-db-${random_id.instance_id.hex}"
  machine_type = "f1-micro"
  zone         = "us-central1-a"
+
+ depends_on = ["google_compute_firewall.default-db"]
 
  boot_disk {
    initialize_params {
@@ -109,10 +113,6 @@ resource "google_compute_instance" "default_db" {
 
   provisioner "remote-exec" {
     inline = [
-      #"export WEB_IP_LOCAL=${google_compute_address.internal_with_subnet_and_address_web.address}",
-      #"export DB_IP_LOCAL=${google_compute_address.internal_with_subnet_and_address_db.address}",
-      #"echo $WEB_IP",
-      #"echo $DB_IP",
       "chmod +x /tmp/scenario_db.sh",
       "sudo -E /tmp/scenario_db.sh",
     ]
@@ -125,7 +125,7 @@ resource "google_compute_instance" "default_web" {
  machine_type = "f1-micro"
  zone         = "us-central1-a"
  
- 
+ depends_on = ["google_compute_instance.default_db"]
  boot_disk {
    initialize_params {
      image = "centos-7-v20190729"
@@ -164,9 +164,6 @@ connection {
  provisioner "remote-exec" {
    inline = [
       "export WEB_IP_NAT=${google_compute_instance.default_web.network_interface.0.access_config.0.nat_ip}",
-      #"export DB_IP_LOCAL=${google_compute_address.internal_with_subnet_and_address_db.address}",
-      #"echo $WEB_IP_NAT",
-      #"echo $DB_IP_LOCAL",
       "chmod +x /tmp/scenario_web.sh",
       "sudo -E /tmp/scenario_web.sh",
     ]
